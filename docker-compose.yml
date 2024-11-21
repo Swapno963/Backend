@@ -1,0 +1,34 @@
+services:
+  backend:
+    container_name: backend
+    build:
+      context: ./
+    volumes:
+      - ./:/cs_uk
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:alpine
+    container_name: cs_db
+    restart: always
+    environment:
+      POSTGRES_USER: cs_db
+      POSTGRES_PASSWORD: noob_db
+      POSTGRES_DB: cs_db
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    container_name: redis
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  db_data:
