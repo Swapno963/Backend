@@ -10,7 +10,7 @@ services:
     depends_on:
       - db
       - redis
-
+    restart: always
   db:
     image: postgres:alpine
     container_name: cs_db

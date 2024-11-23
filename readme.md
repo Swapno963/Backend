@@ -1,6 +1,7 @@
 ## Uk VersitionL 1.0.0
 
-
+Common Rules:
+1. first pull then commit
 
 **Api list:**
 ### Accounts
