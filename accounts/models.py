@@ -6,7 +6,7 @@ class AccountManager(BaseUserManager):
 
 	def create_user(self, phone, password=None, **extra_fields):
 	    if not phone:
-	        raise ValueError('The Phone Number field must be set')
+	        raise ValueError('phone number field must be set')
 
 	    user = self.model(
 	        phone=phone,
