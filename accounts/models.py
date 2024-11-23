@@ -5,8 +5,8 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 class AccountManager(BaseUserManager):
 
     def create_user(self, phone, password=None, **extra_fields):
-	    if not phone:
-	    	raise ValueError('The Phone Number field must be set')
+        if not phone:
+            raise ValueError('The Phone Number field must be set')
 
         user = self.model(
 
