@@ -1,4 +1,6 @@
 from django.db import models
+from accounts.models import CustomUser
+
 
 class Menu(models.Model):
     name = models.CharField(max_length=255)
@@ -22,6 +24,13 @@ class Menu(models.Model):
     
 
 
+class ServiceLocation(models.Model):
+    address =models.CharField(max_length=50)
+
+class Supplier(models.Model):
+    pass
+
+
 class Card(models.Model):
     id = models.AutoField(primary_key=True)
     card_id = models.PositiveIntegerField(unique=True, editable=False)
@@ -30,8 +39,10 @@ class Card(models.Model):
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     duration = models.PositiveIntegerField(help_text="Duration in days")
-    is_active = models.BooleanField(default=True)
-
+    is_active = models.BooleanField(default=False)
+    service_location = models.ForeignKey(ServiceLocation, 
+                                        on_delete=models.SET_DEFAULT, 
+                                        default=None)
 
     def save(self, *args, **kwargs):
         if not self.menu_id:
@@ -43,3 +54,9 @@ class Card(models.Model):
             super(Card, self).save(*args, **kwargs) 
     def __str__(self):
         return self.title
+
+
+
+class Favourite(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)    
+    card = models.ForeignKey(Card, on_delete=models.CASCADE)
