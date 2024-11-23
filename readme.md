@@ -2,6 +2,7 @@
 
 Common Rules:
 1. first pull then commit
+2. create new banch for push
 
 **Api list:**
 ### Accounts
