@@ -24,7 +24,7 @@ Common Rules:
 3. supplier/<int:id>/update_profile/
 
 ### Store
-#### Models: Card, Menu, Favourite 
+#### Models: Card, Menu, Favourite, location 
 1. cards/
 2. cards/<int:user_id>/favourite/
 3. card/<int:pk>/<int:user_id>/add_to_fav/
