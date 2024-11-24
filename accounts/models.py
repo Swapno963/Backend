@@ -77,12 +77,15 @@ class CustomUser(AbstractBaseUser):
 		return self.role == 'customer'
 
 	def save(self, *args, **kwargs):
+
+		super().save(*args, **kwargs)
+
 		if self.is_supplier:
-			supp_exist = SupplierProfile.objects.get(user=self).exists()
+			supp_exist = SupplierProfile.objects.filter(user=self).exists()
 			if not supp_exist:
 				SupplierProfile.objects.create(user=self)
 		if self.is_customer:
-			user_exist = UserProfile.objects.get(user=self).exists()
+			user_exist = UserProfile.objects.filter(user=self).exists()
 			if not user_exist:
 				UserProfile.objects.create(user=self)
 
@@ -95,8 +98,7 @@ class UserProfile(models.Model):
 	street_address = models.CharField(max_length=255, null=True, blank=True)
 
 
-	def __str__(self):
-		return self.user
+	
 
 
 class SupplierProfile(models.Model):
@@ -107,5 +109,3 @@ class SupplierProfile(models.Model):
 	license = models.ImageField(upload_to='supplier/license/', null=True, blank=True)
 	documents = models.ImageField(upload_to='supplier/documents/', null=True, blank=True)
 
-	def __str__(self):
-		return self.user
