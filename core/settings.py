@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'drf_spectacular',
     'nested_admin',
+    'store',
+    'order',
+
 
     'accounts.apps.AccountsConfig',
 ]
