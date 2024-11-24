@@ -21,10 +21,11 @@ class SupplierProfileSerializer(serializers.ModelSerializer):
 class CustomUserSerializer(serializers.ModelSerializer):
     
     userprofile = serializers.SerializerMethodField()
+    userprofile_update = serializers.JSONField(write_only=True, required=False)  
     
     class Meta:
         model = CustomUser
-        fields = ['id', 'name', 'phone', 'email', 'userprofile']
+        fields = ['id', 'name', 'phone', 'email', 'userprofile', 'userprofile_update']
 
         
     def get_userprofile(self, obj):
@@ -39,14 +40,13 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return None
 
     def update(self, instance, validated_data):
-        userprofile_data = validated_data.pop('userprofile', None)
-
+        # Update CustomUser fields
         instance.name = validated_data.get('name', instance.name)
         instance.phone = validated_data.get('phone', instance.phone)
         instance.email = validated_data.get('email', instance.email)
         instance.save()
 
-
+        userprofile_data = validated_data.pop('userprofile_update', None)
         if userprofile_data:
             if instance.role == 'customer':
                 profile, created = UserProfile.objects.get_or_create(user=instance)
@@ -61,7 +61,6 @@ class CustomUserSerializer(serializers.ModelSerializer):
                 profile.save()
 
         return instance
-
 
 
 
@@ -105,3 +104,18 @@ class LoginSerializer(serializers.Serializer):
         extra_kwargs = {
             'password':{'write_only':True}
         }
+
+
+
+class ChangePassSerializer(serializers.Serializer):
+    current_password = serializers.CharField(max_length=255, style={'input_type':'password'}, write_only=True)
+    password = serializers.CharField(max_length=255, style={'input_type':'password'}, write_only=True)
+    confirm_password = serializers.CharField(max_length=255, style={'input_type':'password'}, write_only=True)
+    
+    class Meta:
+        fields = ['current_password', 'password', 'confirm_password']
+        
+    def validate(self, data):
+        if data['password'] != data['confirm_password']:
+            raise serializers.ValidationError({"confirm_password": "Confirm password does not match."})
+        return data

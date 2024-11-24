@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import UserProfileSerializer, CustomUserSerializer, RegisterSerializer, LoginSerializer
+from .serializers import *
 from rest_framework import status, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -8,6 +8,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from .models import UserProfile, CustomUser, SupplierProfile
 from drf_spectacular.utils import extend_schema
 from django.contrib import auth
+from rest_framework.decorators import action
 # Create your views here.
 
 
@@ -59,6 +60,23 @@ class UserProfileView(APIView):
             'profile': user_serializer.data,
         }      
         return Response(response_data, status=status.HTTP_200_OK)
+
+
+    @action(detail=False, methods=['post'], url_path=r'update/')
+    @extend_schema(
+        request=CustomUserSerializer,
+        responses={
+            200: CustomUserSerializer,
+            400: 'Invalid request',
+        },
+        description='Update user profile information'
+    )
+    def patch(self, request, *args, **kwargs):
+        serializer = CustomUserSerializer(request.user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
 
@@ -102,6 +120,27 @@ class LoginUser(APIView):
                 user_serializer = CustomUserSerializer(user)
                 return Response({'token':token, 'user':user_serializer.data, 'message':'Login success'}, status=status.HTTP_200_OK)
             else:
-                return Response({'errors':'phone and password is not valid'}, status=status/HTTP_404_NOT_FOUND)
+                return Response({'errors':'your login credentials are not valid'}, status=status.HTTP_404_NOT_FOUND)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class ChangePassword(APIView):
+    serializer_class = ChangePassSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        user = request.user
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+                current_password = request.data.get('current_password')
+                password = request.data.get('password')
+
+                if not user.check_password(current_password):
+                        return Response({'errors':'Current password does not match.'}, status=status.HTTP_400_BAD_REQUEST)
+
+                user.set_password(password)
+                user.save()
+                return Response({'messages':'password updated successfully'}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
