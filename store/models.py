@@ -9,22 +9,6 @@ class ServiceLocation(models.Model):
         return self.address
 
 
-class Menu(models.Model):
-    name = models.CharField(max_length=255)
-    card = models.ForeignKey(Card, on_delete=models.SET_DEFAULT, related_name='menus', default=None)
-    description = models.TextField()
-    image = models.ImageField(upload_to='menu_images/')
-    menu_id = models.CharField(unique=True, max_length=50)
-
-    def __str__(self):
-        return self.name
-    
-
-
-class Supplier(models.Model):
-    pass
-
-
 class Card(models.Model):
     id = models.AutoField(primary_key=True)
     card_id = models.PositiveIntegerField(unique=True, editable=False)
@@ -48,6 +32,22 @@ class Card(models.Model):
             super(Card, self).save(*args, **kwargs) 
     def __str__(self):
         return self.title
+
+
+
+class Menu(models.Model):
+    name = models.CharField(max_length=255)
+    card = models.ForeignKey(Card, on_delete=models.SET_DEFAULT, related_name='menus', default=None)
+    description = models.TextField()
+    image = models.ImageField(upload_to='menu_images/')
+    menu_id = models.CharField(unique=True, max_length=50)
+
+    def __str__(self):
+        return self.name
+
+
+class Supplier(models.Model):
+    pass
 
 
 

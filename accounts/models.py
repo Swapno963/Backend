@@ -31,7 +31,6 @@ class AccountManager(BaseUserManager):
 		return self.create_user(email=email, password=password, **extra_fields)
 
 
-
 class CustomUser(AbstractBaseUser):
 
 	ROLE_CHOICES = [
@@ -88,7 +87,6 @@ class CustomUser(AbstractBaseUser):
 			if not UserProfile.objects.filter(user=self).exists():
 				SupplierProfile.objects.filter(user=self).delete()
 				UserProfile.objects.create(user=self)
-
 
 
 class UserProfile(models.Model):
