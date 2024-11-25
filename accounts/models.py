@@ -81,12 +81,12 @@ class CustomUser(AbstractBaseUser):
 		super().save(*args, **kwargs)
 
 		if self.is_supplier:
-			supp_exist = SupplierProfile.objects.filter(user=self).exists()
-			if not supp_exist:
+			if not SupplierProfile.objects.filter(user=self).exists():
+				UserProfile.objects.filter(user=self).delete()
 				SupplierProfile.objects.create(user=self)
 		if self.is_customer:
-			user_exist = UserProfile.objects.filter(user=self).exists()
-			if not user_exist:
+			if not UserProfile.objects.filter(user=self).exists():
+				SupplierProfile.objects.filter(user=self).delete()
 				UserProfile.objects.create(user=self)
 
 
