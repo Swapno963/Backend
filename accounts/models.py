@@ -97,8 +97,8 @@ class UserProfile(models.Model):
 	address = models.CharField(max_length=255, null=True, blank=True)
 	street_address = models.CharField(max_length=255, null=True, blank=True)
 
-
-	
+	def __str__(self):
+		return f"{str(self.user.name)}---{str(self.user.phone)}"
 
 
 class SupplierProfile(models.Model):
@@ -109,3 +109,5 @@ class SupplierProfile(models.Model):
 	license = models.ImageField(upload_to='supplier/license/', null=True, blank=True)
 	documents = models.ImageField(upload_to='supplier/documents/', null=True, blank=True)
 
+	def __str__(self):
+		return f"{str(self.user.name)}---{str(self.user.phone)}"
