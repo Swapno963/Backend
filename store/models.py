@@ -24,20 +24,17 @@ class Card(models.Model):
     def __str__(self):
         return self.title
 
+
+
 class Menu(models.Model):
     name = models.CharField(max_length=255)
-    card = models.ForeignKey(Card, on_delete=models.SET_DEFAULT, related_name='menus', default=None)
+    card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='menus')
     description = models.TextField()
     image = models.ImageField(upload_to='menu_images/')
     menu_id = models.CharField(unique=True, max_length=50)
 
     def __str__(self):
         return self.name
-
-
-class Supplier(models.Model):
-    pass
-
 
 
 class Favourite(models.Model):
