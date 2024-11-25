@@ -16,4 +16,4 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONBUFFERED 1
 
 
-CMD exec sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+CMD exec sh -c "python manage.py collectstatic --dry-run && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
