@@ -18,11 +18,28 @@ def update_phone_on_userprofile_delete(sender, instance, **kwargs):
 
 # Create your models here.
 class Order(models.Model):
+    PENDING = 'pending'
+    ACCEPTED = 'accepted'
+    DELIVERED = 'delivered'
+
+    ORDER_STATUS_CHOICES = [
+        (PENDING, 'Pending'),
+        (ACCEPTED, 'Accepted'),
+        (DELIVERED, 'Delivered'),
+    ]
+    
+
     card_code = models.CharField(max_length=3)
     delivery_date = models.DateTimeField()
     sended_by_supplier = models.BooleanField(default=False)
     received_by_admin = models.BooleanField(default=False)
-    status = models.CharField(max_length=50)
+    status = models.CharField(
+        max_length=10,
+        choices=ORDER_STATUS_CHOICES,
+        default=PENDING,
+    )
+    is_paid = models.BooleanField(default=False)
+
 
     card = models.ForeignKey(Card, on_delete=models.CASCADE,blank=True, null=True)
     supplier = models.ForeignKey(SupplierProfile,on_delete=models.SET_DEFAULT,default=None, null=True)
@@ -43,7 +60,6 @@ class Payment(models.Model):
     payment_invoice = models.IntegerField()
     status = models.CharField(max_length=50)
 
-    card = models.ForeignKey(Card, on_delete=models.CASCADE,blank=True, null=True)
     order = models.ForeignKey(Order, on_delete=models.SET_DEFAULT,default=None)
     customer = models.ForeignKey(UserProfile, on_delete=models.SET_DEFAULT,default=None, null=True)
 

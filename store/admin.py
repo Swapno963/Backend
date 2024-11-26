@@ -9,27 +9,27 @@ class AdminFavourite(admin.ModelAdmin):
 
 
 admin.site.register(Menu)
-admin.site.register(Card)
+# admin.site.register(Card)
 
 
-# class AdminMenu(NestedStackedInline):
-# 	model = Menu
-# 	extra = 2
-# 	max_num = 7
-# 	can_delete = True
-# 	list_display = ['id', 'menu_id', 'name', 'card']
+class AdminMenu(NestedStackedInline):
+	model = Menu
+	extra = 2
+	max_num = 7
+	can_delete = True
+	list_display = ['id', 'menu_id', 'name', 'card']
 
 
 
-# @admin.register(Card)
-# class AdminCard(NestedModelAdmin):
-# 	list_display = ['id', 'card_id', 'title', 'price', 'duration', 'service_location', 'is_feature', 'is_active']
-# 	list_editable = ['is_feature', 'is_active']
-# 	list_filter = ['is_active', 'is_feature', 'service_location']
-# 	search_fields = ['title', 'service_location', 'card_id']
-# 	list_per_page = 10
+@admin.register(Card)
+class AdminCard(NestedModelAdmin):
+	list_display = ['id', 'card_id', 'title', 'price', 'duration', 'service_location', 'is_feature', 'is_active']
+	list_editable = ['is_feature', 'is_active']
+	list_filter = ['is_active', 'is_feature', 'service_location']
+	search_fields = ['title', 'service_location', 'card_id']
+	list_per_page = 10
 
-# 	inlines = [AdminMenu]
+	inlines = [AdminMenu]
 
 
 
