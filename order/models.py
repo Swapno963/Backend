@@ -1,5 +1,6 @@
 from django.db import models
 from accounts.models import UserProfile,SupplierProfile
+from store.models import Card
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
@@ -22,6 +23,8 @@ class Order(models.Model):
     sended_by_supplier = models.BooleanField(default=False)
     received_by_admin = models.BooleanField(default=False)
     status = models.CharField(max_length=50)
+
+    card = models.ForeignKey(Card, on_delete=models.CASCADE,blank=True, null=True)
     supplier = models.ForeignKey(SupplierProfile,on_delete=models.SET_DEFAULT,default=None, null=True)
     customer = models.ForeignKey(UserProfile, on_delete=models.SET_DEFAULT,default=None, null=True)
 
@@ -37,10 +40,12 @@ class Payment(models.Model):
     email = models.CharField(max_length=30, null=True, blank=True) # this is for storeing email if user profile is deleted
     amount = models.PositiveIntegerField()
     payment_method = models.CharField(max_length=50)
-    customer = models.ForeignKey(UserProfile, on_delete=models.SET_DEFAULT,default=None, null=True)
     payment_invoice = models.IntegerField()
     status = models.CharField(max_length=50)
+
+    card = models.ForeignKey(Card, on_delete=models.CASCADE,blank=True, null=True)
     order = models.ForeignKey(Order, on_delete=models.SET_DEFAULT,default=None)
+    customer = models.ForeignKey(UserProfile, on_delete=models.SET_DEFAULT,default=None, null=True)
 
     def __str__(self):
         supplier_user = str(self.order) if self.order  else "No Order"
