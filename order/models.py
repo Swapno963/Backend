@@ -11,7 +11,7 @@ def update_phone_on_userprofile_delete(sender, instance, **kwargs):
     
     for payment in payments:
         payment.email = instance.user.email if instance.user else "0000000000"
-        payment.customer_id = None  # Clear the ForeignKey
+        payment.customer = None  # Clear the ForeignKey
         payment.save()
 
 
