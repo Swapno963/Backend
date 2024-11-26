@@ -24,6 +24,8 @@ class Card(models.Model):
     def __str__(self):
         return self.title
 
+
+
 class Menu(models.Model):
     name = models.CharField(max_length=255)
     card = models.ForeignKey(Card, on_delete=models.CASCADE, null=True,blank=True)
@@ -33,11 +35,6 @@ class Menu(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class Supplier(models.Model):
-    pass
-
 
 
 class Favourite(models.Model):
