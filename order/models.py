@@ -43,7 +43,7 @@ class Payment(models.Model):
     order = models.ForeignKey(Order, on_delete=models.SET_DEFAULT,default=None)
 
     def __str__(self):
-        supplier_user = str(self.order.user) if self.order  else "No Order"
+        supplier_user = str(self.order) if self.order  else "No Order"
         customer_user = str(self.customer.user) if self.customer and self.customer.user else "No Customer"
         return f"{supplier_user}---{customer_user}"
 
