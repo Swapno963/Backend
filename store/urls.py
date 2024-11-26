@@ -1,8 +1,13 @@
-from django.urls import path
-from .views import CardCreateAPIView,MenuCreateAPIView
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import ServiceLoactionView, FavouriteView
+
+
+
+router = DefaultRouter()
+router.register(r'service-locations', ServiceLoactionView, basename='service_location')
+router.register(r'favourite', FavouriteView, basename='favourite')
 
 urlpatterns = [
-    path('cards/create/', CardCreateAPIView.as_view(), name='card-create'),
-    path('menus/create/', MenuCreateAPIView.as_view(), name='menu-create'),
-
+	path('', include(router.urls))	
 ]
