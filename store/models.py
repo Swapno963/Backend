@@ -28,7 +28,7 @@ class Card(models.Model):
 
 class Menu(models.Model):
     name = models.CharField(max_length=255)
-    card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='menus')
+    card = models.ForeignKey(Card, on_delete=models.CASCADE, null=True,blank=True, related_name='menus')
     description = models.TextField()
     image = models.ImageField(upload_to='menu_images/')
     menu_id = models.CharField(unique=True, max_length=50)

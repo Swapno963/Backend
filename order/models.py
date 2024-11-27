@@ -1,5 +1,6 @@
 from django.db import models
 from accounts.models import UserProfile,SupplierProfile
+from store.models import Card
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
@@ -11,17 +12,36 @@ def update_phone_on_userprofile_delete(sender, instance, **kwargs):
     
     for payment in payments:
         payment.email = instance.user.email if instance.user else "0000000000"
-        payment.customer_id = None  # Clear the ForeignKey
+        payment.customer = None  # Clear the ForeignKey
         payment.save()
 
 
 # Create your models here.
 class Order(models.Model):
+    PENDING = 'pending'
+    ACCEPTED = 'accepted'
+    DELIVERED = 'delivered'
+
+    ORDER_STATUS_CHOICES = [
+        (PENDING, 'Pending'),
+        (ACCEPTED, 'Accepted'),
+        (DELIVERED, 'Delivered'),
+    ]
+    
+
     card_code = models.CharField(max_length=3)
     delivery_date = models.DateTimeField()
     sended_by_supplier = models.BooleanField(default=False)
     received_by_admin = models.BooleanField(default=False)
-    status = models.CharField(max_length=50)
+    status = models.CharField(
+        max_length=10,
+        choices=ORDER_STATUS_CHOICES,
+        default=PENDING,
+    )
+    is_paid = models.BooleanField(default=False)
+
+
+    card = models.ForeignKey(Card, on_delete=models.CASCADE,blank=True, null=True)
     supplier = models.ForeignKey(SupplierProfile,on_delete=models.SET_DEFAULT,default=None, null=True)
     customer = models.ForeignKey(UserProfile, on_delete=models.SET_DEFAULT,default=None, null=True)
 
@@ -37,13 +57,14 @@ class Payment(models.Model):
     email = models.CharField(max_length=30, null=True, blank=True) # this is for storeing email if user profile is deleted
     amount = models.PositiveIntegerField()
     payment_method = models.CharField(max_length=50)
-    customer = models.ForeignKey(UserProfile, on_delete=models.SET_DEFAULT,default=None, null=True)
     payment_invoice = models.IntegerField()
     status = models.CharField(max_length=50)
+
     order = models.ForeignKey(Order, on_delete=models.SET_DEFAULT,default=None)
+    customer = models.ForeignKey(UserProfile, on_delete=models.SET_DEFAULT,default=None, null=True)
 
     def __str__(self):
-        supplier_user = str(self.order.user) if self.order  else "No Order"
+        supplier_user = str(self.order) if self.order  else "No Order"
         customer_user = str(self.customer.user) if self.customer and self.customer.user else "No Customer"
         return f"{supplier_user}---{customer_user}"
 
