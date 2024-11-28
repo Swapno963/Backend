@@ -1,9 +1,11 @@
-from .serializers import OrderSerializer, PaymentSerializer,OrderCreateSerializer
+from .serializers import OrderSerializer, PaymentSerializer,OrderCreateSerializer,OrderPartialSerializer
 from .models import Order, Payment
+from rest_framework.decorators import action
 
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import ValidationError
 
 
 class OrderViewSet(viewsets.ModelViewSet):
@@ -14,22 +16,20 @@ class OrderViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == "list":
             return OrderSerializer  
+        elif self.action =="partial_update":
+            return OrderPartialSerializer
         return super().get_serializer_class()
 
-
     def create(self, request, *args, **kwargs):
-        #custom logic here
         data = request.data.copy()
-        data['customer'] = request.user.id  # Associate the order with the logged-in user
+        data['customer'] = request.user.id 
         serializer = OrderCreateSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         return Response(data, status=status.HTTP_201_CREATED)
     
     def perform_create(self, serializer):
-        # Save the serializer with custom logic 
         serializer.save()
-        print("in perform create")
 
     # Get all order of specific user
     def list(self, request, *args, **kwargs):
@@ -40,21 +40,15 @@ class OrderViewSet(viewsets.ModelViewSet):
             "orders": serializer.data
         })
     
-
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-
-        # Check if editing is allowed
-        if instance.is_paid:
-            return Response(
-                {"error": "This object cannot be edited."},
-                status=status.HTTP_403_FORBIDDEN
-            )
-
-        return super().update(request, *args, **kwargs)
-
+    def partial_update(self, request, *args, **kwargs):
+        kwargs['partial'] = True
+        allowed_fields = {"delivery_date", "sended_by_supplier", "status"}
+        for field in request.data.keys():
+            if field not in allowed_fields:
+                raise ValidationError({field: "This field cannot be updated."})
+        return super().partial_update(request, *args, **kwargs)
+    
     def destroy(self, request, *args, **kwargs):
-        # Disable the delete action
         return Response({'error': 'Delete action is not allowed.'}, 
                         status=status.HTTP_405_METHOD_NOT_ALLOWED                        )
 
