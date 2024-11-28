@@ -28,7 +28,6 @@ class OrderViewSet(viewsets.ModelViewSet):
         #custom logic here
         data = request.data.copy()
         data['customer'] = request.user.id  # Associate the order with the logged-in user
-
         serializer = OrderCreateSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -69,6 +68,16 @@ class OrderViewSet(viewsets.ModelViewSet):
 class PaymentViewSet(viewsets.ModelViewSet):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
+    permission_classes = [IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        #custom logic here
+        data = request.data.copy()
+        data['customer'] = request.user.id  # Associate the order with the logged-in user
+        serializer = PaymentSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
         return Response({'error': 'Edit action is not allowed.'}, 
