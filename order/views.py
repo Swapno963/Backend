@@ -1,16 +1,9 @@
-from django.shortcuts import render
 from .serializers import OrderSerializer, PaymentSerializer,OrderCreateSerializer
 from .models import Order, Payment
 
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-
-
-import jwt
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.exceptions import AuthenticationFailed
-from django.conf import settings
 
 
 class OrderViewSet(viewsets.ModelViewSet):
@@ -73,7 +66,7 @@ class PaymentViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         #custom logic here
         data = request.data.copy()
-        data['customer'] = request.user.id  # Associate the order with the logged-in user
+        data['customer'] = request.user.id  # Associate the payment with the logged-in user
         serializer = PaymentSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
