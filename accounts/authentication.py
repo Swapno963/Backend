@@ -2,13 +2,13 @@ from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from .models import BlacklistedToken
-
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 
 class TokenBlacklistAuthentication(BaseAuthentication):
     def authenticate(self, request):
 
         access_token = request.headers.get("Authorization", None)
-        refresh_token = request.headers.get("refresh_token", None)
+        refresh_token = request.headers.get("Refresh", None)
 
         if access_token:
             parts = access_token.split()
@@ -24,11 +24,12 @@ class TokenBlacklistAuthentication(BaseAuthentication):
                 raise AuthenticationFailed("Invalid access token format.")
 
         if refresh_token:
-            if BlacklistedToken.objects.filter(token=refresh_token).exists():
-                raise AuthenticationFailed("This refresh token has been blacklisted.")
             try:
-                RefreshToken(refresh_token) 
-            except Exception:
+                refresh = RefreshToken(refresh_token)
+                refresh.check_blacklist()
+            except TokenError:
+                raise AuthenticationFailed("This refresh token has been blacklisted.")
+            except InvalidToken:
                 raise AuthenticationFailed("Invalid or expired refresh token.")
 
         return None
