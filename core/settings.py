@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'drf_spectacular',
     'nested_admin',
     'store',
@@ -51,16 +52,41 @@ INSTALLED_APPS = [
 
 REST_FRAMEWORK = {
 
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    # ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ],
 
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'accounts.authentication.TokenBlacklistAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',   
     ),
 
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-   
+}
+
+
+SIMPLE_JWT = {
+    'BLACKLIST_AFTER_ROTATION': True,
+}
+
+
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Cooking Station UK',
+    'DESCRIPTION': 'Get and test all endpoints here',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': True,
+    'SECURITY': [
+        {'CustomBearerAuth': []},
+    ],
+    'COMPONENT_SECURITY_SCHEMES': {
+        'CustomBearerAuth': { 
+            'type': 'http',
+            'scheme': 'bearer',
+            'bearerFormat': 'JWT',
+            'description': 'Enter your JWT access token in the format: "Bearer <token>".',
+        },
+    },
 }
 
 

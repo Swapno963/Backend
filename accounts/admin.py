@@ -1,7 +1,13 @@
 from django.contrib import admin
-from .models import CustomUser, UserProfile, SupplierProfile
+from .models import CustomUser, UserProfile, SupplierProfile, BlacklistedToken
 from nested_admin import NestedModelAdmin, NestedTabularInline, NestedStackedInline
 # Register your models here.
+
+
+@admin.register(BlacklistedToken)
+class BlacklistedTokenAdmin(admin.ModelAdmin):
+    list_display = ['id', 'token', 'blacklisted_at']
+
 
 
 class UserProfileAdmin(NestedStackedInline):
