@@ -30,7 +30,7 @@ class Order(models.Model):
     
 
     card_code = models.CharField(max_length=3)
-    delivery_date = models.DateTimeField()
+    delivery_date = models.DateTimeField(null=True)
     sended_by_supplier = models.BooleanField(default=False)
     received_by_admin = models.BooleanField(default=False)
     status = models.CharField(
@@ -69,4 +69,3 @@ class Payment(models.Model):
         return f"{supplier_user}---{customer_user}"
 
 
-    

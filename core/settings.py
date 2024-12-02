@@ -49,6 +49,15 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
 ]
 
+from datetime import timedelta
+
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=12),  # Access token valid for 12 hours
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),   # Refresh token valid for 7 days
+    'ROTATE_REFRESH_TOKENS': False,               # Keep refresh tokens static
+    'BLACKLIST_AFTER_ROTATION': False,            # Tokens are not blacklisted after use
+}
 REST_FRAMEWORK = {
 
     # 'DEFAULT_PERMISSION_CLASSES': [

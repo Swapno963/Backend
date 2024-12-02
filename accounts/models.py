@@ -108,4 +108,4 @@ class SupplierProfile(models.Model):
 	documents = models.ImageField(upload_to='supplier/documents/', null=True, blank=True)
 
 	def __str__(self):
-		return f"{str(self.user.name)}---{str(self.user.phone)}"
+		return f"{str(self.id)}--{str(self.user.name)}---{str(self.user.phone)}"
