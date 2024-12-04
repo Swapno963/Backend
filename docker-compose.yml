@@ -10,11 +10,11 @@ services:
     depends_on:
       - db
       - redis
-    restart: always
+    restart: on-failure
   db:
     image: postgres:alpine
     container_name: cs_db
-    restart: always
+    restart: on-failure
     environment:
       POSTGRES_USER: cs_db
       POSTGRES_PASSWORD: noob_db

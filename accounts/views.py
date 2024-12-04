@@ -5,10 +5,11 @@ from rest_framework import status, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .models import UserProfile, CustomUser, SupplierProfile
+from .models import UserProfile, CustomUser, SupplierProfile, BlacklistedToken
 from drf_spectacular.utils import extend_schema
 from django.contrib import auth
 from rest_framework.decorators import action
+from rest_framework_simplejwt.exceptions import InvalidToken
 # Create your views here.
 
 
@@ -125,6 +126,35 @@ class LoginUser(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class LogoutUser(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        refresh_token = request.headers.get('Refresh')
+
+        if refresh_token:
+            try:
+                refresh = RefreshToken(refresh_token)
+                refresh.blacklist()
+            except Exception as e:
+                return Response({"detail": f"Invalid refresh token: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+
+        access_token = request.headers.get("Authorization", None)
+        if access_token:
+            try:
+                parts = access_token.split()
+                if len(parts) == 2 and parts[0].lower() == "bearer":
+                    token = parts[1]
+                    BlacklistedToken.objects.create(token=token)
+                else:
+                    return Response({"detail": "Invalid access token format"}, status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                return Response({"detail": f"Invalid access token: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({"detail": "Successfully logged out."}, status=status.HTTP_200_OK)
+
+
+
 
 class ChangePassword(APIView):
     serializer_class = ChangePassSerializer
@@ -144,3 +174,6 @@ class ChangePassword(APIView):
                 user.save()
                 return Response({'messages':'password updated successfully'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
