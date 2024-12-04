@@ -16,10 +16,10 @@ class SupplierProfileAdmin(NestedStackedInline):
 	extra = 1
 	max_num = 1
 	can_delete = False
-	list_display = ['user', 'address' ] 
+	list_display = ['id','user', 'address' ] 
 
 
-
+admin.site.register(SupplierProfile)
 
 @admin.register(CustomUser)
 class CustomUserAdmin(NestedModelAdmin):
