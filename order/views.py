@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
 
 
-class OrderViewSet(viewsets.ModelViewSet):
+class OrderViewSet(viewsets.ViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
@@ -27,12 +27,8 @@ class OrderViewSet(viewsets.ModelViewSet):
         return Response({
             "data": serializer.data
         }, status=status.HTTP_200_OK)
-    
-    def destroy(self, request, *args, **kwargs):
-        return Response({'error': 'Delete action is not allowed.'}, 
-                        status=status.HTTP_405_METHOD_NOT_ALLOWED                        )
 
-class PaymentViewSet(viewsets.ModelViewSet):
+class PaymentViewSet(viewsets.ViewSet):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
     permission_classes = [IsAuthenticated]
@@ -45,13 +41,3 @@ class PaymentViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(data, status=status.HTTP_201_CREATED)
-
-    def update(self, request, *args, **kwargs):
-        return Response({'error': 'Edit action is not allowed.'}, 
-                        status=status.HTTP_405_METHOD_NOT_ALLOWED                        )
-
-
-    def destroy(self, request, *args, **kwargs):
-        # Disable the delete action
-        return Response({'error': 'Delete action is not allowed.'}, 
-                        status=status.HTTP_405_METHOD_NOT_ALLOWED                        )
