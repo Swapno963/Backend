@@ -40,8 +40,8 @@ class Menu(models.Model):
 
 
 class Favourite(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL)    
-    card = models.ForeignKey(Card, on_delete=models.SET_NULL)
+    user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True)    
+    card = models.ForeignKey(Card, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.user
