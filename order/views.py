@@ -1,11 +1,12 @@
 from .serializers import OrderSerializer, PaymentSerializer,OrderCreateSerializer
 from .models import Order, Payment
 from rest_framework.decorators import action
-
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
+
 
 
 class OrderViewSet(viewsets.ViewSet):
@@ -13,6 +14,11 @@ class OrderViewSet(viewsets.ViewSet):
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
 
+
+    @extend_schema(
+        description = 'create a new order for a logged in user',
+        responses={200:OrderCreateSerializer()}
+        )
     def create(self, request, *args, **kwargs):
         data = request.data.copy()
         data['customer'] = request.user.id 
@@ -21,7 +27,10 @@ class OrderViewSet(viewsets.ViewSet):
         serializer.save()
         return Response(data, status=status.HTTP_201_CREATED)
     
-
+    @extend_schema(
+        description = 'get list of all orders',
+        responses={200:OrderSerializer(many=True)}
+        )
     def list(self, request, *args, **kwargs):
         serializer = self.serializer_class(self.queryset, many=True)
         return Response({
@@ -33,6 +42,11 @@ class PaymentViewSet(viewsets.ViewSet):
     serializer_class = PaymentSerializer
     permission_classes = [IsAuthenticated]
 
+
+    @extend_schema(
+        description = 'create a manual payment object for logged in user.',
+        responses={200:PaymentSerializer(many=True)}
+        )
     def create(self, request, *args, **kwargs):
         #custom logic here
         data = request.data.copy()
