@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'store',
     'order',
     'admin_dashbord',
+    'supplier_dashbord',
 
 
     'accounts.apps.AccountsConfig',
