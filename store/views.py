@@ -113,13 +113,11 @@ class CardView(viewsets.ViewSet):
                 )
 
         if max_price:
-        	print(max_price)
             try:
-        		max_price = Decimal(max_price)
-        		print(max_price)
-        		queryset = queryset.filter(price__lte=max_price)
-        	except ValueError:
-        		return Response(
+                max_price = Decimal(max_price)
+                queryset = queryset.filter(price__lte=max_price)
+            except ValueError:
+                return Response(
 				    {'error': 'Invalid maximum price value'},
 				    status=status.HTTP_400_BAD_REQUEST,
 				)

@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Menu, ServiceLocation,Card,Favourite
+from accounts.models import CustomUser
 from nested_admin import NestedModelAdmin, NestedTabularInline, NestedStackedInline
 # Register your models here.
 
@@ -7,9 +8,6 @@ from nested_admin import NestedModelAdmin, NestedTabularInline, NestedStackedInl
 class AdminFavourite(admin.ModelAdmin):
 	list_display = ['id', 'user', 'card']
 
-
-admin.site.register(Menu)
-# admin.site.register(Card)
 
 
 class AdminMenu(NestedStackedInline):
@@ -31,9 +29,10 @@ class AdminCard(NestedModelAdmin):
 
 	inlines = [AdminMenu]
 
-
-
-
+	def formfield_for_foreignkey(self, db_field, request, **kwargs):
+		if db_field.name == "provider":
+		    kwargs["queryset"] = CustomUser.objects.filter(role="supplier")
+		return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 admin.site.register(ServiceLocation)

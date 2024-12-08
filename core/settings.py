@@ -45,8 +45,6 @@ INSTALLED_APPS = [
     'nested_admin',
     'store',
     'order',
-
-
     'accounts.apps.AccountsConfig',
 ]
 
@@ -61,9 +59,9 @@ SIMPLE_JWT = {
 }
 REST_FRAMEWORK = {
 
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    # ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ],
 
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'accounts.authentication.TokenBlacklistAuthentication',
@@ -73,10 +71,6 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
-
-SIMPLE_JWT = {
-    'BLACKLIST_AFTER_ROTATION': True,
-}
 
 
 

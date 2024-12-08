@@ -15,6 +15,8 @@ class Card(models.Model):
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     duration = models.PositiveIntegerField(help_text="Duration in days")
+    provider = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, blank=True, null=True)
+
     is_active = models.BooleanField(default=False)
     is_feature = models.BooleanField(default=False)
     service_location = models.ForeignKey(ServiceLocation, 
@@ -38,5 +40,8 @@ class Menu(models.Model):
 
 
 class Favourite(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)    
-    card = models.ForeignKey(Card, on_delete=models.SET_DEFAULT, default=None)
+    user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL)    
+    card = models.ForeignKey(Card, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return self.user
