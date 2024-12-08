@@ -87,6 +87,9 @@ class CardView(viewsets.ViewSet):
             OpenApiParameter('name', str, location='query', description='Filter by card name')
         ]
     )
+	
+
+
     @action(detail=False, methods=['get'], url_path='filter')
     def filter_card(self, request):
         queryset = self.get_queryset()
@@ -97,9 +100,8 @@ class CardView(viewsets.ViewSet):
         name = request.query_params.get("name")
 
 
-
         if location:
-        	queryset = queryset.filter(service_location__address__icontains=location)
+               queryset = queryset.filter(service_location__address__icontains=location)
 
 
         if min_price:
@@ -112,14 +114,14 @@ class CardView(viewsets.ViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
+
         if max_price:
-        	print(max_price)
             try:
-        		max_price = Decimal(max_price)
-        		print(max_price)
-        		queryset = queryset.filter(price__lte=max_price)
-        	except ValueError:
-        		return Response(
+                max_price = Decimal(max_price)
+                print(max_price)
+                queryset = queryset.filter(price__lte=max_price)
+            except ValueError:
+                return Response(
 				    {'error': 'Invalid maximum price value'},
 				    status=status.HTTP_400_BAD_REQUEST,
 				)
