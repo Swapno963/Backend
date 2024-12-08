@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'nested_admin',
     'store',
     'order',
+    'admin_dashbord',
 
 
     'accounts.apps.AccountsConfig',
