@@ -103,18 +103,6 @@ class CardView(viewsets.ViewSet):
         if location:
                queryset = queryset.filter(service_location__address__icontains=location)
 
-
-        if min_price:
-            try:
-                min_price = Decimal(min_price)
-                queryset = queryset.filter(price__gte=min_price)
-            except ValueError:
-                return Response(
-                    {'error': 'Invalid minimum price value'},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-
         if max_price:
             try:
                 max_price = Decimal(max_price)

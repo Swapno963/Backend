@@ -25,8 +25,6 @@ class SupplierProfileAdmin(NestedStackedInline):
 	list_display = ['id','user', 'address' ] 
 
 
-admin.site.register(SupplierProfile)
-
 @admin.register(CustomUser)
 class CustomUserAdmin(NestedModelAdmin):
         
@@ -34,7 +32,7 @@ class CustomUserAdmin(NestedModelAdmin):
     list_display_links = ('email', 'name',)
     readonly_fields = ('phone', 'last_login', 'joined_date',)
     ordering = ('-joined_date',)
-
+    search_fields = ['phone', 'email']
     filter_horizontal = ()
     list_filter = ('role', 'is_active',)
     fieldsets = ()

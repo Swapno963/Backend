@@ -3,9 +3,7 @@ FROM python:3.10-alpine
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONBUFFERED=1
 
-RUN apk add --no-cache gcc musl-dev libffi-dev \
-    && apk add --no-cache python3-dev \
-    && pip install --upgrade pip
+RUN apk add --no-cache && pip install --upgrade pip
 
 WORKDIR /cs_uk
 

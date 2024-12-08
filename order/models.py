@@ -3,7 +3,7 @@ from accounts.models import UserProfile,SupplierProfile
 from store.models import Card
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
-
+# Create your models here.
 
 
 @receiver(pre_delete, sender=UserProfile)
@@ -12,11 +12,10 @@ def update_phone_on_userprofile_delete(sender, instance, **kwargs):
     
     for payment in payments:
         payment.email = instance.user.email if instance.user else "0000000000"
-        payment.customer = None  # Clear the ForeignKey
+        payment.customer = None
         payment.save()
 
 
-# Create your models here.
 class Order(models.Model):
     PENDING = 'pending'
     ACCEPTED = 'accepted'
@@ -28,40 +27,41 @@ class Order(models.Model):
         (DELIVERED, 'Delivered'),
     ]
     
-
     card_code = models.CharField(max_length=3)
     delivery_date = models.DateTimeField(null=True)
-    sended_by_supplier = models.BooleanField(default=False)
-    received_by_admin = models.BooleanField(default=False)
     status = models.CharField(
         max_length=10,
         choices=ORDER_STATUS_CHOICES,
         default=PENDING,
     )
     is_paid = models.BooleanField(default=False)
-
-
     card = models.ForeignKey(Card, on_delete=models.CASCADE,blank=True, null=True)
-    supplier = models.ForeignKey(SupplierProfile,on_delete=models.SET_DEFAULT,default=None, null=True)
     customer = models.ForeignKey(UserProfile, on_delete=models.SET_DEFAULT,default=None, null=True)
-
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        supplier_user = str(self.supplier.user) if self.supplier and self.supplier.user else "No Supplier"
-        customer_user = str(self.customer.user) if self.customer and self.customer.user else "No Customer"
-        return f"{supplier_user}---{customer_user}"
+        return self.card
 
 
 
 class Payment(models.Model):
-    email = models.CharField(max_length=30, null=True, blank=True) # this is for storeing email if user profile is deleted
-    amount = models.PositiveIntegerField()
-    payment_method = models.CharField(max_length=50)
-    payment_invoice = models.IntegerField()
-    status = models.CharField(max_length=50)
 
+    email = models.CharField(max_length=30, null=True, blank=True)
+    payment_method = models.CharField(max_length=50)
+    sender_number = models.CharField(max_length=15)
+    transaction_id = models.CharField(max_length=50)
+    total_amount = models.IntegerField()
     order = models.ForeignKey(Order, on_delete=models.SET_DEFAULT,default=None)
     customer = models.ForeignKey(UserProfile, on_delete=models.SET_DEFAULT,default=None, null=True)
+    is_confirmed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        if self.is_confirmed:
+            self.order.status = ACCEPTED
+            self.order.save()
 
     def __str__(self):
         supplier_user = str(self.order) if self.order  else "No Order"
