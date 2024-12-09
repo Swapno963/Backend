@@ -10,9 +10,7 @@ class OrderSerializer(serializers.ModelSerializer):
 class OrderCreateSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Order
-		fields = ['card_code','card','supplier']
-		# exclude = ['delivery_date','']
-
+		fields = ['card_code','card']
 
 class PaymentSerializer(serializers.ModelSerializer):
 	class Meta:

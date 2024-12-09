@@ -9,6 +9,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = UserProfile
         fields = ['id', 'image', 'address', 'street_address']
 
+    def update(self, instance, validated_data):
+        if 'image' not in validated_data:
+            validated_data['image'] = instance.image
+        return super().update(instance, validated_data)
+
 
 
 class SupplierProfileSerializer(serializers.ModelSerializer):
@@ -16,6 +21,11 @@ class SupplierProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = SupplierProfile
         fields = ['id', 'image', 'address', 'street_address', 'license', 'documents']
+
+    def update(self, instance, validated_data):
+        if 'image' not in validated_data:
+            validated_data['image'] = instance.image
+        return super().update(instance, validated_data)
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -26,7 +36,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['id', 'name', 'phone', 'email', 'userprofile', 'userprofile_update']
-
+        read_only_fields = ['phone']
         
     def get_userprofile(self, obj):
         if obj.role == 'customer':
@@ -40,7 +50,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return None
 
     def update(self, instance, validated_data):
-        # Update CustomUser fields
+        validated_data.pop('phone', None)
         instance.name = validated_data.get('name', instance.name)
         instance.phone = validated_data.get('phone', instance.phone)
         instance.email = validated_data.get('email', instance.email)

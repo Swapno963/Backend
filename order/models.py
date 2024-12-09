@@ -22,12 +22,12 @@ class Order(models.Model):
     DELIVERED = 'delivered'
 
     ORDER_STATUS_CHOICES = [
-        (PENDING, 'Pending'),
-        (ACCEPTED, 'Accepted'),
-        (DELIVERED, 'Delivered'),
+        (PENDING, 'pending'),
+        (ACCEPTED, 'accepted'),
+        (DELIVERED, 'delivered'),
     ]
     
-    card_code = models.CharField(max_length=3)
+    card_code = models.CharField(max_length=50)
     delivery_date = models.DateTimeField(null=True)
     status = models.CharField(
         max_length=10,
@@ -40,7 +40,7 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.card
+        return self.card_code
 
 
 
@@ -59,8 +59,9 @@ class Payment(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
-        if self.is_confirmed:
-            self.order.status = ACCEPTED
+        if self.is_confirmed and self.order.is_paid != True:
+            self.order.status = 'accepted'
+            self.order.is_paid = True
             self.order.save()
 
     def __str__(self):
