@@ -1,7 +1,8 @@
 from django.urls import path
-from .views import BasicAnalytics
+from .views import BasicAnalyticsOfUsers,BasicAnalyticsOfOrder
 urlpatterns = [
-    path('admin_basic/', BasicAnalytics.as_view()),
+    path('user_basic/', BasicAnalyticsOfUsers.as_view()),
+    path('order_basic/', BasicAnalyticsOfOrder.as_view()),
 ]
 
 
