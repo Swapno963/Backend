@@ -22,7 +22,10 @@ urlpatterns = [
 
 
     # for sote
-    path('order/', include('order.urls')),
+    path('order/', include('order.urls')),    
+    
+    # for Admint dashbord
+    path('admin_dashbord/', include('admin_dashbord.urls')),
 
 ]
 
