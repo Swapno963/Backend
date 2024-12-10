@@ -36,6 +36,7 @@ class AdminCard(NestedModelAdmin):
 
 
 admin.site.register(ServiceLocation)
+admin.site.register(Menu)
 
 
 

@@ -8,9 +8,13 @@ from accounts.models import CustomUser
 class Command(BaseCommand):
     help = 'Generate fake data for the Card model'
 
+    def add_arguments(self, parser):
+        parser.add_argument('count', type=int, help="Number of cards to generate")
+
     def handle(self, *args, **kwargs):
         fake = Faker()
-        users = CustomUser.objects.filter(is_active=True)  # Assuming you want active users as providers
+        count = kwargs['count']
+        users = CustomUser.objects.filter(is_active=True)
         locations = ServiceLocation.objects.all()
 
         if not users.exists() or not locations.exists():
@@ -18,13 +22,13 @@ class Command(BaseCommand):
             return
 
         cards = []
-        for _ in range(10):  # Generate 10 cards
+        for _ in range(count):
             card = Card(
                 card_id=fake.uuid4(),
                 title=fake.catch_phrase(),
                 description=fake.text(max_nb_chars=200),
                 price=Decimal(fake.pydecimal(left_digits=5, right_digits=2, positive=True)),
-                duration=random.randint(1, 365),  # Duration in days
+                duration=random.randint(1, 15),
                 provider=random.choice(users),
                 is_active=fake.boolean(),
                 is_feature=fake.boolean(),
@@ -33,4 +37,4 @@ class Command(BaseCommand):
             cards.append(card)
 
         Card.objects.bulk_create(cards)
-        self.stdout.write(self.style.SUCCESS('Successfully generated 10 Card objects.'))
+        self.stdout.write(self.style.SUCCESS(f'Successfully generated {count} Card objects.'))

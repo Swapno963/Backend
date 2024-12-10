@@ -32,7 +32,7 @@ class Menu(models.Model):
     name = models.CharField(max_length=255)
     card = models.ForeignKey(Card, on_delete=models.CASCADE, null=True,blank=True, related_name='menus')
     description = models.TextField()
-    image = models.ImageField(upload_to='menu_images/')
+    image = models.ImageField(upload_to='menu_images/', null=True, blank=True)
     menu_id = models.CharField(unique=True, max_length=50)
 
     def __str__(self):

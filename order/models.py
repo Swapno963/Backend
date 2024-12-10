@@ -39,8 +39,8 @@ class Order(models.Model):
     customer = models.ForeignKey(CustomUser, on_delete=models.SET_DEFAULT,default=None, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return self.card
+    # def __str__(self):
+    #     return self.status
 
 
 
@@ -63,9 +63,9 @@ class Payment(models.Model):
             self.order.status = Order.ACCEPTED
             self.order.save()
 
-    def __str__(self):
-        supplier_user = str(self.order) if self.order  else "No Order"
-        customer_user = str(self.customer.user) if self.customer and self.customer.user else "No Customer"
-        return f"{supplier_user}---{customer_user}"
+    # def __str__(self):
+    #     supplier_user = str(self.order) if self.order  else "No Order"
+    #     customer_user = str(self.customer.user) if self.customer and self.customer.user else "No Customer"
+    #     return f"{supplier_user}---{customer_user}"
 
 

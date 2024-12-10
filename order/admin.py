@@ -8,6 +8,7 @@ class OrderAdmin(admin.ModelAdmin):
     search_fields = ('card_code',)  
     ordering = ('-delivery_date',)
 admin.site.register(Order, OrderAdmin)
+# admin.site.register(Order)
 
 
 class PaymentAdmin(admin.ModelAdmin):

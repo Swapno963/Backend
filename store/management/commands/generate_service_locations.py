@@ -5,17 +5,20 @@ from faker import Faker
 
 
 class Command(BaseCommand):
-    help = 'Generate 10 random ServiceLocation objects'
+    help = 'Generate random ServiceLocation objects'
+
 
     def handle(self, *args, **kwargs):
-        fake = Faker()
-        locations = []
 
-        for _ in range(10):
-            address = fake.address()[:10]
-            locations.append(ServiceLocation(address=address))
+        locations = ['Farmgate','Mirpur 1', 'Mirpur 10', 'Danmondi 32', 'khilkhet','Banani']
 
+        service_location = []
+        for lt in locations:
+            location = ServiceLocation(
+                address=lt
+                )
+            service_location.append(location)
         # Bulk create objects for better performance
-        ServiceLocation.objects.bulk_create(locations)
+        ServiceLocation.objects.bulk_create(service_location)
 
         self.stdout.write(self.style.SUCCESS('Successfully generated 10 ServiceLocation objects'))
