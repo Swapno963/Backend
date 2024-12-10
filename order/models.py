@@ -1,5 +1,5 @@
 from django.db import models
-from accounts.models import UserProfile,SupplierProfile
+from accounts.models import UserProfile,SupplierProfile, CustomUser
 from store.models import Card
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
@@ -36,7 +36,7 @@ class Order(models.Model):
     )
     is_paid = models.BooleanField(default=False)
     card = models.ForeignKey(Card, on_delete=models.CASCADE,blank=True, null=True)
-    customer = models.ForeignKey(UserProfile, on_delete=models.SET_DEFAULT,default=None, null=True)
+    customer = models.ForeignKey(CustomUser, on_delete=models.SET_DEFAULT,default=None, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -52,7 +52,7 @@ class Payment(models.Model):
     transaction_id = models.CharField(max_length=50)
     total_amount = models.IntegerField()
     order = models.ForeignKey(Order, on_delete=models.SET_DEFAULT,default=None)
-    customer = models.ForeignKey(UserProfile, on_delete=models.SET_DEFAULT,default=None, null=True)
+    customer = models.ForeignKey(CustomUser, on_delete=models.SET_DEFAULT,default=None, null=True)
     is_confirmed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -60,7 +60,7 @@ class Payment(models.Model):
         super().save(*args, **kwargs)
 
         if self.is_confirmed:
-            self.order.status = ACCEPTED
+            self.order.status = Order.ACCEPTED
             self.order.save()
 
     def __str__(self):
