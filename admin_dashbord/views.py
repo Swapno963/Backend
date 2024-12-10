@@ -4,6 +4,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from accounts.models import CustomUser
 from order.models import Order
+from store.models import ServiceLocation
+
+
 class BasicAnalyticsOfUsers(APIView):
     """
     Showing different types of analytics
@@ -24,7 +27,7 @@ class BasicAnalyticsOfUsers(APIView):
         )
 
         return Response({
-            "data": analytics
+            "data": analytics,
         }, status=status.HTTP_200_OK)
 
 
@@ -55,4 +58,23 @@ class BasicAnalyticsOfOrder(APIView):
 
         return Response({
             "data": analytics
+        }, status=status.HTTP_200_OK)
+
+
+
+class BasicAnalyticsOfStore(APIView):
+    """
+    Showing all our location we have
+    
+    """
+    queryset = CustomUser.objects.all() 
+
+    def get(self, request, format=None):
+        """
+        Return a list of location.
+        """
+      
+        service_location = ServiceLocation.objects.values('id', 'address')
+        return Response({
+            "Service location":list(service_location),
         }, status=status.HTTP_200_OK)
