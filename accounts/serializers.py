@@ -36,7 +36,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['id', 'name', 'phone', 'email', 'userprofile', 'userprofile_update']
-        read_only_fields = ['phone']
+        read_only_fields = ('phone',)
         
     def get_userprofile(self, obj):
         if obj.role == 'customer':

@@ -23,6 +23,46 @@ services:
     ports:
       - "5432:5432"
 
+  celery-pdf:
+    container_name: celery-pdf
+    build:
+      context: ./
+    command: celery --app=core worker -l INFO -Q queue1
+    volumes:
+      - ./:/cs_uk
+    depends_on:
+      - redis
+    environment:
+      - TZ=Asia/Dhaka
+
+  celery-util:
+    container_name: celery-util
+    build:
+      context: ./
+    command: celery --app=core worker -l INFO -Q queue2
+    volumes:
+      - ./:/cs_uk
+    depends_on:
+      - redis
+    environment:
+      - TZ=Asia/Dhaka
+
+
+  celery-beat:
+    container_name: celerybeat
+    build:
+      context: ./
+    command: celery --app=core beat -l INFO 
+    volumes:
+      - ./:/cs_uk
+      - celery-beat-schedule:/celerybeat-schedule
+    depends_on:
+      - redis
+      - backend
+    environment:
+      - TZ=Asia/Dhaka
+
+
   redis:
     container_name: redis
     image: redis:alpine
@@ -32,3 +72,5 @@ services:
 
 volumes:
   db_data:
+  celery-beat-schedule:
+    driver: local  
